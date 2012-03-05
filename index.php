@@ -36,12 +36,13 @@ function returnJson($result) {
 
 $options = parseOptions();
 switch ($options['method']) {
-  case 'getFact':
-    
+  case FFF_GET_FACT:
+    $fact = new Fact();
+    returnJson($fact->load($options['id']));
     break;
 
-  case 'getNumber':
-    
+  case FFF_GET_GUID:
+    returnJson(array('id' => Fact::getGUID()));
     break;
 
   default:

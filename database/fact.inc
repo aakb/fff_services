@@ -64,8 +64,7 @@ class Fact {
     return $output;
   }
 
-
-  private function load($guid = NULL, $random = FALSE) {
+  public function load($guid = NULL, $random = FALSE) {
     // Select nodes where workflow is publised.
     $statement = "SELECT node.nid AS nid, 
                          node.title AS title,
@@ -91,6 +90,25 @@ class Fact {
     $row = $query->fetch(PDO::FETCH_ASSOC);
     if (!empty($row)) {
       $this->properties = $row;
+    }
+    else {
+      throw new Exception('Fact with guid "'.$this->guid.'" not found in '.__FILE__.' line '.__LINE__);
+    }
+  }
+
+  public static function getGUID() {
+    $connection = PDOMysql::getInstance();
+
+    $statement = "SELECT node.nid AS GUID
+                    FROM node node
+              INNER JOIN field_data_field_workflow workflow ON node.nid = workflow.entity_id
+                     AND (workflow.entity_type = 'node' AND workflow.deleted = '0')
+                   WHERE node.type = 'fact' AND workflow.field_workflow_tid = '2'
+                ORDER BY rand() LIMIT 1";
+    $query = $connection->execute($statement);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    if (!empty($row)) {
+      return $row['GUID'];
     }
     else {
       throw new Exception('Fact with guid "'.$this->guid.'" not found in '.__FILE__.' line '.__LINE__);
