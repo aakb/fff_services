@@ -29,20 +29,20 @@ function parseOptions() {
   return $options;
 }
 
-function returnJson($result) {
+function returnJson($result, $callback) {
    header('Content-type: application/json');
-   echo json_encode($result);
+   echo $callback . '(' . json_encode($result) . ')';
 }
 
 $options = parseOptions();
 switch ($options['method']) {
   case FFF_GET_FACT:
     $fact = new Fact();
-    returnJson($fact->load($options['id']));
+    returnJson($fact->load($options['id']), $options['callback']);
     break;
 
   case FFF_GET_GUID:
-    returnJson(array('id' => Fact::getGUID()));
+    returnJson(array('id' => Fact::getGUID()), $options['callback']);
     break;
 
   default:
