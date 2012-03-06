@@ -9,22 +9,23 @@ include_once dirname(__FILE__).'/pdo_mysql.inc';
 
 class Fact {
 
-  private $table = 'facts';
   private $connection = NULL;
   private $properties = array();
 
   public function __construct($values = array()) {
     $this->properties = $values + array(
-      'guid' => -1, // Node nid from Drupal
+      'guid' => NULL, // Node nid from Drupal
       'title' => NULL,
+      'author' => NULL,
       'time' => NULL,
       'content' => NULL,
       'inspiration' => NULL,
       'source' => NULL,
       'keywords' => NULL,
     );
-    
+
     $this->connection = PDOMysql::getInstance();
+    $this->load();
   }
 
   /**
@@ -35,7 +36,7 @@ class Fact {
       $this->properties[$key] = $val;
     }
     else {
-      throw new Exception('Property "'.$key.'" does not exists in '.__FILE__.' line '.__LINE__);
+      throw new Exception('Property "'.$key.'" does not exists in '.basename(__FILE__).' line '.__LINE__);
     }
   }
 
@@ -47,7 +48,7 @@ class Fact {
       return $this->properties[$key];
     }
     else {
-      throw new Exception('Property "'.$key.'" does not exists in '.__FILE__.' line '.__LINE__);
+      throw new Exception('Property "'.$key.'" does not exists in '.basename(__FILE__).' line '.__LINE__);
     }
   }
 
@@ -64,11 +65,17 @@ class Fact {
     return $output;
   }
 
-  public function load($guid = NULL, $random = FALSE) {
+  public function toJson() {
+    if ($this->guid == NULL) {
+      throw new Exception('The fact have not been loaded from the database!', -1);
+    }
+    return $this->properties;
+  }
+
+  public function load($random = FALSE) {
     // Select nodes where workflow is publised.
-    $statement = "SELECT node.nid AS nid, 
-                         node.title AS title,
-                         node.changed AS changed,
+    $statement = "SELECT node.title AS title,
+                         node.changed AS time,
                          author.field_fact_author_value AS author,
                          content.field_fact_content_value AS content
                     FROM node node
@@ -78,21 +85,28 @@ class Fact {
                      AND (workflow.entity_type = 'node' AND workflow.deleted = '0')
                    WHERE node.type = 'fact'
                      AND workflow.field_workflow_tid = '2'";
+
+//      'inspiration' => NULL,
+//      'source' => NULL,
+//      'keywords' => NULL,
+
     if ($random) {
      $statement .= ' ORDER BY rand() LIMIT 1';
     }
-    else if ($guid != NULL) {
-      $statement .= ' node.nid = ' . $guid;
+    else {
+      $statement .= ' AND node.nid = ' . $this->guid;
     }
     $query = $this->connection->execute($statement);
 
     // Fetch and insert data into this ovject
     $row = $query->fetch(PDO::FETCH_ASSOC);
     if (!empty($row)) {
-      $this->properties = $row;
+      foreach ($row as $key => $value) {
+        $this->$key = $value;
+      }
     }
     else {
-      throw new Exception('Fact with guid "'.$this->guid.'" not found in '.__FILE__.' line '.__LINE__);
+      throw new Exception('Fact with guid "'.$this->guid.'" not found in '.basename(__FILE__).' line '.__LINE__);
     }
   }
 

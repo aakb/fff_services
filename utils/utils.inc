@@ -36,7 +36,7 @@ class Utils {
     try {
       $method = strtolower(Utils::check_plain(Utils::getParam('method')));
     } catch (Exception $e) {
-      throw new Exception('Unable to parse method from the URL!', -1);
+      throw new Exception('Unable to find the method parameter in the URL!', -1);
     }
     return $method;
   }
@@ -45,7 +45,7 @@ class Utils {
     try {
       $callback = strtolower(Utils::check_plain(Utils::getParam('callback')));
     } catch (Exception $e) {
-      throw new Exception('Unable to parse callback from the URL!', -1);
+      throw new Exception('Unable to find the callback parameter in the URL!', -1);
     }
     return $callback;
   }
@@ -53,12 +53,14 @@ class Utils {
   public static function getGUID() {
     try {
       $guid = Utils::check_plain(Utils::getParam('guid'));
-      if (!is_int($guid) || $guid >= 0) {
-        throw new Exception('The GUID is not a number!', -1);
-      }
     } catch (Exception $e) {
-      throw new Exception('Unable to parse GUID from the URL!', -1);
+      throw new Exception('Unable to find the GUID parameter in the URL!', -1);
     }
+
+    if (!is_numeric($guid) || $guid < 0) {
+      throw new Exception('The GUID provided is not a number!', -1);
+    }
+
     return $guid;
   }
 
