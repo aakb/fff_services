@@ -1,7 +1,9 @@
 <?php
 
-/*
- * TODO: Create the config object as a singleton pattern.
+/**
+ * @file
+ * Configuration class that basically holds information about the credentials
+ * for the database.
  */
 
 class Conf {
@@ -52,24 +54,7 @@ class Conf {
     }
     return $this->webroot;
   }
-
-  private $admin_page = '/user/admin.php';
-  public function getAdminPage() {
-    return $this->getWebroot() . $this->admin_page;
-  }
   // End define the system locations
-
-  // Cookie config
-  private $cookie_name   = 'finurlig_fakta';
-  private $cookie_expire = 30; // Mins
-  public function getCookieName() {
-    return $this->cookie_name;
-  }
-
-  public function getCookieExpire() {
-    return $this->cookie_expire * 60; // Secs
-  }
-  // End cookie config
 }
 
 $conf = new Conf();
