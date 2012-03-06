@@ -43,7 +43,7 @@ class Utils {
 
   public static function getCallback() {
     try {
-      $callback = strtolower(Utils::check_plain(Utils::getParam('callback')));
+      $callback = Utils::check_plain(Utils::getParam('callback'));
     } catch (Exception $e) {
       throw new Exception('Unable to find the callback parameter in the URL!', -1);
     }

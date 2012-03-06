@@ -19,8 +19,8 @@ class Fact {
       'author' => NULL,
       'time' => NULL,
       'content' => NULL,
-      'inspiration' => NULL,
-      'source' => NULL,
+      'inspirations' => array(),
+      'sources' => array(),
       'keywords' => array(),
     );
 
@@ -86,6 +86,34 @@ class Fact {
     $this->keywords = $keywords;
   }
 
+  private function loadSources() {
+    $sources = array();
+    $statement = "SELECT sources.field_fact_source_title AS title,
+                         sources.field_fact_source_url AS url
+                    FROM node node
+              INNER JOIN field_revision_field_fact_source sources ON node.nid = sources.entity_id
+                   WHERE node.type = 'fact' AND node.nid = " . $this->guid;
+    $query = $this->connection->execute($statement);
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $sources[] = $row;
+    }
+    $this->sources = $sources;
+  }
+
+  private function loadInspirations() {
+    $inspirations = array();
+    $statement = "SELECT inspirations.field_fact_inspiration_title AS title,
+                         inspirations.field_fact_inspiration_url AS url
+                    FROM node node
+              INNER JOIN field_revision_field_fact_inspiration inspirations ON node.nid = inspirations.entity_id
+                   WHERE node.type = 'fact' AND node.nid = " . $this->guid;
+    $query = $this->connection->execute($statement);
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $inspirations[] = $row;
+    }
+    $this->inspirations = $inspirations;
+  }
+
   private function loadFact($random = FALSE) {
     // Select nodes where workflow is publised.
     $statement = "SELECT node.title AS title,
@@ -123,6 +151,8 @@ class Fact {
     }
 
     $this->loadKeywords();
+    $this->loadSources();
+    $this->loadInspirations();
   }
 
   public static function getGUID() {
