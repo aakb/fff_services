@@ -21,11 +21,11 @@ class Fact {
       'content' => NULL,
       'inspiration' => NULL,
       'source' => NULL,
-      'keywords' => NULL,
+      'keywords' => array(),
     );
 
     $this->connection = PDOMysql::getInstance();
-    $this->load();
+    $this->loadFact();
   }
 
   /**
@@ -72,7 +72,21 @@ class Fact {
     return $this->properties;
   }
 
-  public function load($random = FALSE) {
+  private function loadKeywords() {
+    $keywords = array();
+    $statement = "SELECT terms.name AS keyword
+                    FROM node node
+              INNER JOIN field_revision_field_fact_tags tags ON node.nid = tags.entity_id
+              INNER JOIN taxonomy_term_data terms ON tags.field_fact_tags_tid = terms.tid
+                   WHERE node.type = 'fact' AND node.nid = " . $this->guid;
+    $query = $this->connection->execute($statement);
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $keywords[] = $row['keyword'];
+    }
+    $this->keywords = $keywords;
+  }
+
+  private function loadFact($random = FALSE) {
     // Select nodes where workflow is publised.
     $statement = "SELECT node.title AS title,
                          node.changed AS time,
@@ -88,7 +102,6 @@ class Fact {
 
 //      'inspiration' => NULL,
 //      'source' => NULL,
-//      'keywords' => NULL,
 
     if ($random) {
      $statement .= ' ORDER BY rand() LIMIT 1';
@@ -108,6 +121,8 @@ class Fact {
     else {
       throw new Exception('Fact with guid "'.$this->guid.'" not found in '.basename(__FILE__).' line '.__LINE__);
     }
+
+    $this->loadKeywords();
   }
 
   public static function getGUID() {
