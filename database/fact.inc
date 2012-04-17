@@ -147,10 +147,7 @@ class Fact {
                       FROM node node
                 INNER JOIN field_data_field_fact_author author ON node.nid = author.entity_id
                 INNER JOIN field_data_field_fact_content content ON node.nid = content.entity_id
-                INNER JOIN field_data_field_workflow workflow ON node.nid = workflow.entity_id
-                       AND (workflow.entity_type = 'node' AND workflow.deleted = '0')
-                     WHERE node.type = 'fact'
-                       AND workflow.field_workflow_tid = '2'";
+                     WHERE node.type = 'fact' AND node.status = '1'";
 
       if ($random) {
         $statement .= ' ORDER BY rand() LIMIT 1';
@@ -192,9 +189,7 @@ class Fact {
 
     $statement = "SELECT node.nid AS GUID
                     FROM node node
-              INNER JOIN field_data_field_workflow workflow ON node.nid = workflow.entity_id
-                     AND (workflow.entity_type = 'node' AND workflow.deleted = '0')
-                   WHERE node.type = 'fact' AND workflow.field_workflow_tid = '2'
+                   WHERE node.type = 'fact' AND node.status = '1'
                 ORDER BY rand() LIMIT 1";
     $query = $connection->execute($statement);
     $row = $query->fetch(PDO::FETCH_ASSOC);
