@@ -20,6 +20,7 @@ class Fact {
       'author' => NULL,
       'time' => NULL,
       'content' => NULL,
+      'organization' => NULL,
       'inspirations' => array(),
       'sources' => array(),
       'keywords' => array(),
@@ -143,10 +144,12 @@ class Fact {
       $statement = "SELECT node.title AS title,
                            node.changed AS time,
                            author.field_fact_author_value AS author,
-                           content.field_fact_content_value AS content
+                           content.field_fact_content_value AS content,
+                           organization.field_fact_organization_value AS organization
                       FROM node node
                 INNER JOIN field_data_field_fact_author author ON node.nid = author.entity_id
                 INNER JOIN field_data_field_fact_content content ON node.nid = content.entity_id
+                INNER JOIN field_data_field_fact_organization organization ON node.nid = organization.entity_id
                      WHERE node.type = 'fact' AND node.status = '1'";
 
       if ($random) {
