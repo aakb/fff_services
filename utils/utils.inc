@@ -17,10 +17,10 @@ class Utils {
    *   The value of the parameter.
    */
   public static function getParam($param) {
-    if ($_GET[$param] != '') {
+    if (isset($_GET[$param])) {
       return Utils::check_plain($_GET[$param]);
     }
-    else if ($_POST[$param] != '') {
+    else if (isset($_POST[$param])) {
       return Utils::check_plain($_POST[$param]);
     }
     else {
