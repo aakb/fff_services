@@ -59,7 +59,7 @@ class Fact {
    * Implements __toString() that returns the object formatted as an unordered
    * list.
    */
-  public function __toString() {    
+  public function __toString() {
     $output = '<ul>';
     foreach ($this->properties as $key => $value) {
       $output .= '<li>'.$key.': '.$value.'</li>';
@@ -106,7 +106,9 @@ class Fact {
                          sources.field_fact_source_url AS url
                     FROM node node
               INNER JOIN field_revision_field_fact_source sources ON node.nid = sources.entity_id
-                   WHERE node.type = 'fact' AND node.nid = " . $this->guid;
+                   WHERE node.type = 'fact'
+                     AND sources.revision_id = node.vid
+                     AND node.nid = " . $this->guid;
     $query = $this->connection->execute($statement);
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
       $sources[] = $row;
@@ -123,7 +125,9 @@ class Fact {
                          inspirations.field_fact_inspiration_url AS url
                     FROM node node
               INNER JOIN field_revision_field_fact_inspiration inspirations ON node.nid = inspirations.entity_id
-                   WHERE node.type = 'fact' AND node.nid = " . $this->guid;
+                   WHERE node.type = 'fact'
+                     AND inspirations.revision_id = node.vid
+                     AND node.nid = " . $this->guid;
     $query = $this->connection->execute($statement);
     while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
       $inspirations[] = $row;
