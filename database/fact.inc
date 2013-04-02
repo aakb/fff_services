@@ -186,6 +186,43 @@ class Fact {
   }
 
   /**
+   * Loads a number of facts based on a offset and count.
+   *
+   * @param int $offset
+   *  Where to start loading facts.
+   * @param int $count
+   *  The number of facts to load.
+   * @return array $facts
+   *  An array with facts.
+   */
+  public static function getFacts($offset, $count) {
+    // Connect to the database an extract the next x id's.
+    $connection = PDOMysql::getInstance();
+    $guids = array();
+    $statement = "SELECT node.nid AS guid
+                    FROM node node
+                   WHERE node.type = 'fact' AND node.status = '1'
+                ORDER BY node.changed
+                   LIMIT " . $count . " OFFSET " . $offset;
+    $query = $connection->execute($statement);
+    while ($row = $query->fetch(PDO::FETCH_ASSOC)) {
+      $guids[] = $row['guid'];
+    }
+
+
+    // Get facts.
+    $facts = array();
+    foreach ($guids as $guid) {
+      $fact = new Fact(array('guid' => $guid));
+      $facts[$guid] = $fact->getFact();
+    }
+
+    return $facts;
+  }
+
+
+
+  /**
    * Finds a random fact GUID in the database.
    *
    * @return string
@@ -194,14 +231,14 @@ class Fact {
   public static function getGUID() {
     $connection = PDOMysql::getInstance();
 
-    $statement = "SELECT node.nid AS GUID
+    $statement = "SELECT node.nid AS guid
                     FROM node node
                    WHERE node.type = 'fact' AND node.status = '1'
                 ORDER BY rand() LIMIT 1";
     $query = $connection->execute($statement);
     $row = $query->fetch(PDO::FETCH_ASSOC);
     if (!empty($row)) {
-      return $row['GUID'];
+      return $row['guid'];
     }
     else {
       throw new Exception('Fact with guid "'.$this->guid.'" not found in '.__FILE__.' line '.__LINE__);

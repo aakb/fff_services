@@ -93,6 +93,73 @@ class Utils {
   }
 
   /**
+   * Gets the offset parameter.
+   *
+   * @return int
+   *   The offset parsed from the parameter.
+   */
+  public static function getOffset() {
+    try {
+      $offset = Utils::check_plain(Utils::getParam('offset'));
+    } catch (Exception $e) {
+      throw new Exception('Unable to find the offset parameter in the URL!', -1);
+    }
+
+    if (!is_numeric($offset) || $offset < 0) {
+      throw new Exception('The offset provided is not a positive number!', -1);
+    }
+
+    return $offset;
+  }
+
+  /**
+   * Gets the count parameter.
+   *
+   * @return int
+   *   The guid parsed from the parameter.
+   */
+  public static function getCount() {
+    try {
+      $count = Utils::check_plain(Utils::getParam('count'));
+    } catch (Exception $e) {
+      throw new Exception('Unable to find the count parameter in the URL!', -1);
+    }
+
+    if (!is_numeric($count) || $count < 0) {
+      throw new Exception('The count provided is not a positive number!', -1);
+    }
+
+    return $count;
+  }
+
+  /**
+   * Check if the API key given is valided.
+   *
+   * @return boolean
+   * @throws Exception
+   */
+  public static function isAPIKeyValid() {
+    try {
+      $api_key = Utils::check_plain(Utils::getParam('api-key'));
+    } catch (Exception $e) {
+      throw new Exception('Unable to find the api-key parameter in the URL!', -1);
+    }
+
+    $connection = PDOMysql::getInstance();
+    $statement = "SELECT apikey AS apikey
+                    FROM fff_api_keys
+                    WHERE apikey = '" . $api_key . "'";
+    $query = $connection->execute($statement);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+
+    if (empty($row)) {
+      throw new Exception('Invalided api-key used: "' . $api_key);
+    }
+
+    return FALSE;
+  }
+
+  /**
    * Sanitizes the input string to remove evil code.
    *
    * @param string $text
