@@ -7,7 +7,9 @@
  *
  * It exposes 2 methods:
  *    getFact -> index.php?method=getFact&callback=parseJson&guid=2
+ *    getFacts -> index.php?method=getFacts&offset=25&count=25&callback=parseJson
  *    getGuid -> index.php?method=getGuid&callback=parseJson
+ *
  *
  * If an error is detected the following JSONP will be returned, so make sure to have
  * an error callback function.
@@ -23,7 +25,9 @@ include_once dirname(__FILE__).'/database/fact.inc';
  */
 define('FFF_ERROR_CALLBACK', 'error');
 define('FFF_GET_FACT', 'getfact');
+define('FFF_GET_FACTS', 'getfacts');
 define('FFF_GET_GUID', 'getguid');
+
 
 /**
  * Helper function that parses the GET parameters into an options array.
@@ -47,7 +51,7 @@ function parseOptions() {
 
   // If getFact is called, try to get the guid form the URL.
   if ($options['method'] == FFF_GET_FACT) {
-   try {
+    try {
       $options['guid'] = Utils::getGUID();
     } catch (Exception $e) {
       // The was an error in getting the GUID, so return an error message.
@@ -57,6 +61,20 @@ function parseOptions() {
       ));
     }
   }
+
+  if ($options['method'] == FFF_GET_FACTS) {
+    try {
+      $options['offset'] = Utils::getOffset();
+      $options['count'] = Utils::getCount();
+    } catch (Exception $e) {
+      // The was an error in getting the offset, so return an error message.
+      returnJsonError(array(
+        'msg' => $e->getMessage(),
+        'code' => $e->getCode(),
+      ));
+    }
+  }
+
   return $options;
 }
 
@@ -92,6 +110,19 @@ switch ($options['method']) {
     try {
       $fact = new Fact(array('guid' => $options['guid']));
       returnJson($fact->getFact(), $options['callback']);
+    } catch (Exception $e) {
+      returnJsonError(array(
+        'msg' => $e->getMessage(),
+        'code' => $e->getCode(),
+      ));
+    }
+    exit(1);
+    break;
+
+  case FFF_GET_FACTS:
+    try {
+      $facts = Fact::getFacts($options['offset'], $options['count']);
+      returnJson($facts, $options['callback']);
     } catch (Exception $e) {
       returnJsonError(array(
         'msg' => $e->getMessage(),
