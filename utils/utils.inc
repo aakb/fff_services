@@ -131,6 +131,34 @@ class Utils {
 
     return $count;
   }
+
+  /**
+   * Check if the API key given is valided.
+   *
+   * @return boolean
+   * @throws Exception
+   */
+  public static function isAPIKeyValid() {
+    try {
+      $api_key = Utils::check_plain(Utils::getParam('api-key'));
+    } catch (Exception $e) {
+      throw new Exception('Unable to find the api-key parameter in the URL!', -1);
+    }
+
+    $connection = PDOMysql::getInstance();
+    $statement = "SELECT apikey AS apikey
+                    FROM fff_api_keys
+                    WHERE apikey = '" . $api_key . "'";
+    $query = $connection->execute($statement);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+
+    if (empty($row)) {
+      throw new Exception('Invalided api-key used: "' . $api_key);
+    }
+
+    return FALSE;
+  }
+
   /**
    * Sanitizes the input string to remove evil code.
    *

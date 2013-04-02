@@ -102,6 +102,17 @@ function returnJson($result, $callback) {
    echo $callback . '(' . json_encode($result) . ')';
 }
 
+// Check the API key given and log the request.
+try {
+  Utils::isAPIKeyValid();
+} catch (Exception $e) {
+  returnJsonError(array(
+    'msg' => $e->getMessage(),
+    'code' => $e->getCode(),
+  ));
+  exit(-1);
+}
+
 // Main part of index, which takes action based on the options parsed by the
 // helper functions above.
 $options = parseOptions();
