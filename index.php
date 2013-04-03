@@ -28,6 +28,7 @@ define('FFF_ERROR_CALLBACK', 'error');
 define('FFF_GET_FACT', 'getfact');
 define('FFF_GET_FACTS', 'getfacts');
 define('FFF_GET_GUID', 'getguid');
+define('FFF_GET_COUNT', 'getcount');
 
 /**
  * Helper function that parses the GET parameters into an options array.
@@ -99,7 +100,12 @@ function returnJsonError($result) {
  */
 function returnJson($result, $callback) {
    header('Content-type: application/json');
-   echo $callback . '(' . json_encode($result) . ')';
+   if ($callback) {
+     echo $callback . '(' . json_encode($result) . ')';
+   }
+   else {
+     echo json_encode($result);
+   }
 }
 
 // Check the API key given and log the request.
@@ -151,6 +157,11 @@ switch ($options['method']) {
 
   case FFF_GET_GUID:
     returnJson(array('guid' => Fact::getGUID()), $options['callback']);
+    exit(1);
+    break;
+
+  case FFF_GET_COUNT:
+    returnJson(array('count' => Fact::getCount()), $options['callback']);
     exit(1);
     break;
 

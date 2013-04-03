@@ -220,8 +220,6 @@ class Fact {
     return $facts;
   }
 
-
-
   /**
    * Finds a random fact GUID in the database.
    *
@@ -243,5 +241,22 @@ class Fact {
     else {
       throw new Exception('Fact with guid "'.$this->guid.'" not found in '.__FILE__.' line '.__LINE__);
     }
+  }
+
+  /**
+   * Get number of facts currently in the database.
+   *
+   * @return string
+   *    A random GUID
+   */
+  public static function getCount() {
+    $connection = PDOMysql::getInstance();
+
+    $statement = "SELECT count(1) AS count
+                    FROM node node
+                   WHERE node.type = 'fact' AND node.status = '1'";
+    $query = $connection->execute($statement);
+    $row = $query->fetch(PDO::FETCH_ASSOC);
+    return $row['count'];
   }
 }
