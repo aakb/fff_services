@@ -133,17 +133,29 @@ class Utils {
   }
 
   /**
+   * Gets the API key parameter.
+   *
+   * @return int
+   *   The guid parsed from the parameter.
+   */
+  public static function getAPIKey() {
+    try {
+      $api_key = Utils::check_plain(Utils::getParam('api-key'));
+    } catch (Exception $e) {
+      throw new Exception('Unable to find the API key parameter in the URL!', -1);
+    }
+
+    return $api_key;
+  }
+
+  /**
    * Check if the API key given is valided.
    *
    * @return boolean
    * @throws Exception
    */
   public static function isAPIKeyValid() {
-    try {
-      $api_key = Utils::check_plain(Utils::getParam('api-key'));
-    } catch (Exception $e) {
-      throw new Exception('Unable to find the api-key parameter in the URL!', -1);
-    }
+    $api_key = Utils::getAPIKey();
 
     $connection = PDOMysql::getInstance();
     $statement = "SELECT apikey AS apikey

@@ -19,6 +19,7 @@
 
 include_once dirname(__FILE__).'/utils/utils.inc';
 include_once dirname(__FILE__).'/database/fact.inc';
+include_once dirname(__FILE__).'/utils/syslogger.inc';
 
 /**
  * Defines the methods avaliable.
@@ -27,7 +28,6 @@ define('FFF_ERROR_CALLBACK', 'error');
 define('FFF_GET_FACT', 'getfact');
 define('FFF_GET_FACTS', 'getfacts');
 define('FFF_GET_GUID', 'getguid');
-
 
 /**
  * Helper function that parses the GET parameters into an options array.
@@ -105,7 +105,9 @@ function returnJson($result, $callback) {
 // Check the API key given and log the request.
 try {
   Utils::isAPIKeyValid();
+  SysLogger::getLogger()->log(Utils::getAPIKey(), 'Accesed', 'INFO');
 } catch (Exception $e) {
+  SysLogger::getLogger()->log(Utils::getAPIKey(), 'Invalid API-KEY', 'ERROR');
   returnJsonError(array(
     'msg' => $e->getMessage(),
     'code' => $e->getCode(),
