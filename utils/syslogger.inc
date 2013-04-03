@@ -16,25 +16,21 @@ else {
  * Implements SysLogger class as a singleton class.
  */
 class SysLogger {
-  private $init = FALSE;
+  private static $instance;
 
   private function __construct() {
-    if ($this->init) {
-      $this->init = TRUE;
-      $default_facility = defined('LOG_LOCAL0') ? LOG_LOCAL0 : LOG_USER;
-      openlog('fff_service', LOG_NDELAY, $default_facility);
-    }
+    $default_facility = defined('LOG_LOCAL0') ? LOG_LOCAL0 : LOG_USER;
+    openlog('fff_service', LOG_NDELAY, $default_facility);
   }
 
   /**
    * Call this method to get the logger class.
    */
-  public static function getLogger(){
-    static $instance = null;
-    if ($instance === null) {
-      $instance = new SysLogger();
+  public static function getLogger() {
+    if (self::$instance === null) {
+      self::$instance = new SysLogger();
     }
-    return $instance;
+    return self::$instance;
   }
 
   public function log($api_key, $message, $severity) {
