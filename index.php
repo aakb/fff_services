@@ -104,10 +104,14 @@ function returnJson($result, $callback) {
 
 // Check the API key given and log the request.
 try {
+  $api_key = Utils::getAPIKey();
   Utils::isAPIKeyValid();
-  SysLogger::getLogger()->log(Utils::getAPIKey(), 'Accesed', LOG_INFO);
+  SysLogger::getLogger()->log($api_key, 'Accesed', LOG_INFO);
 } catch (Exception $e) {
-  SysLogger::getLogger()->log(Utils::getAPIKey(), 'Invalid API-KEY', LOG_ERR);
+  if (!isset($api_key)) {
+    $api_key = 'unknown';
+  }
+  SysLogger::getLogger()->log($api_key, 'Invalid API-KEY', LOG_ERR);
   returnJsonError(array(
     'msg' => $e->getMessage(),
     'code' => $e->getCode(),
