@@ -67,7 +67,8 @@ class Utils {
     try {
       $callback = Utils::check_plain(Utils::getParam('callback'));
     } catch (Exception $e) {
-      throw new Exception('Unable to find the callback parameter in the URL!', -1);
+      // Callback is optional, so we just set it to FALSE.
+      $callback = FALSE;
     }
     return $callback;
   }
