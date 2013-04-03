@@ -38,11 +38,10 @@ class SysLogger {
   }
 
   public function log($api_key, $message, $severity) {
-    $message = strtr('!api_key|!timestamp|!ip|!request_uri|!query|!message', array(
+    $message = strtr('!api_key|!timestamp|!ip|!query|!message', array(
       '!api_key'     => $api_key,
       '!timestamp'   => date('r', $_SERVER['REQUEST_TIME']),
       '!ip'          => $_SERVER['REMOTE_ADDR'],
-      '!request_uri' => $_SERVER['REQUEST_URI'],
       '!query'       => $_SERVER['QUERY_STRING'],
       '!message'     => strip_tags($message),
     ));
