@@ -1,20 +1,20 @@
-# Finurlige Fakta Web-service
-The project has been build around a web-service that makes it possible to make applications that utilises facts in different ways and this document explains the methods available at the service.
+# Finurlige Fakta (Quirky Facts) web-service
+The project is build around a web-service making it possible to create applications utilizing facts from "Finurlige Fakta" in different ways. This document explain the methods available at the service.
 
 ## Obtaining an API key
-To access the web-service you first need to obtain an API key for the service. This key is personal and should not be shared with others. The API key is free and all you need is to register for it at http://finurligefakta.dk/api-key after which you will receive an e-mail with your key.
+To access the web-service you first need to obtain an API key. This key is personal and should not be shared with others. The API key is free and all you need is register here: http://finurligefakta.dk/api-key after which you will receive an e-mail with your key.
 
-__Note__: If we detect that you are calling the web-service to aggressively or to may times in a row we may disable your key to ensure that the service will work for all users. You will receive a mail notification, if we disable your key.
+__Note__: if we detect that you are calling the web-service to aggressively we may disable your key to ensure that the service will work for all users. You will receive an mail notification, if your key is disabled.
 
 ## The web-service
-The service is located at http://service.finurligefakta.dk/ and returns all responses as JSON due to the fact that it was developed as a backend for a JavaScript widget. If a callback parameter is given the services will handle the response as a [JSON-P](https://en.wikipedia.org/wiki/JSONP) to get around cross domain requests.
+The service is located at http://service.finurligefakta.dk/ and all responses are returned as JSON due to the fact that it was developed as a backend for a JavaScript widget. If a callback parameter is given the services will handle the response as [JSON-P](https://en.wikipedia.org/wiki/JSONP) to get around cross domain requests.
 
-All request should as minimum have these query parameters when accessing the service and.
+All requests should as a minimum include these query parameters when accessing the service.
 ```javascript
 http://service.finurligefakta.dk/?method=<METHOD>&callback=<FUNCTION>&api-key=<KEY>
 ```
 
-The service offers these methods.
+The service offer following methods:
 
 1. getGuid
 2. getFact
@@ -77,7 +77,7 @@ This is the result of the call with the GUID set to 737.
 -------------------------
 
 ### 3. getFacts
-Returns an array of fact objects based on the offset and count parameters. The _offset_ set a starting point in the list of facts and _count_ set how many form the _offset_ you want. This way you can load x facts at the time. You can use the _getCount_ call to get the number of facts currently available 
+Returns an array of fact objects based on the offset and count parameters. The _offset_ sets a starting point in the list of facts and _count_ set how many items from the _offset_ you want in return. This way you can load x facts at the time. You can use the _getCount_ call to get the number of facts currently available.
 
 #### Call
 ```javascript
@@ -85,7 +85,7 @@ http://service.finurligefakta.dk/?method=getFacts&api-key=<KEY>&callback=<CALLBA
 ```
 
 #### Response (JSON)
-A call to the service with an offset set to 20 and a count of 2 will give an response as below where fact object is the same format as under _getFact_ above.
+A call to the service with offset set to 20 and a count of 2 will give a response as below. Fact object is the same format as under _getFact_ above.
 ```javascript
 {
   "557" : { FACT OBJECT }, 
@@ -109,26 +109,3 @@ http://service.finurligefakta.dk/?method=getCount&api-key=<KEY>&callback=<CALLBA
   "count" : "562"
 }
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
