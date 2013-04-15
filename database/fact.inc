@@ -168,7 +168,7 @@ class Fact {
       $row = $query->fetch(PDO::FETCH_ASSOC);
       if (!empty($row)) {
         foreach ($row as $key => $value) {
-          $this->$key = $value;
+          $this->$key = strip_tags($value);
         }
       }
       else {
